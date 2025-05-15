@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>You Are Being Watched</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      color: red;
+      font-family: monospace;
+      text-align: center;
+      height: 100%;
+      overflow: hidden;
+    }
+    #message {
+      margin-top: 20%;
+      font-size: 2em;
+      white-space: pre-line;
+    }
+    .glitch {
+      animation: glitch 0.5s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 2px 2px red; }
+      25% { text-shadow: -2px -2px blue; }
+      50% { text-shadow: 2px -2px lime; }
+      75% { text-shadow: -2px 2px magenta; }
+      100% { text-shadow: 0 0 white; }
+    }
+  </style>
+</head>
+<body>
+  <div id="message" class="glitch">
+    You are being watched...
+
+    Locating your position
+
+    IP Address: Scanning
+    Operating System: Unknown
+    Device: Compromised
+
+    Do not close this page...
+    Your files will be deleted in
+    <span id="countdown">10</span> seconds
+  </div>
+
+  <audio id="creepySound" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/10/17/audio_f1f879b26c.mp3?filename=night-creepy-background-ambient-117397.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    let count = 10;
+    const countdown = document.getElementById('countdown');
+    const interval = setInterval(() => {
+      count--;
+      countdown.textContent = count;
+      if (count === 0) {
+        document.getElementById('message').innerText = 'You have been fully hacked. Transmitting files now...';
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    let cursor = document.createElement('div');
+    cursor.style.width = '10px';
+    cursor.style.height = '10px';
+    cursor.style.border = '2px solid red';
+    cursor.style.position = 'absolute';
+    cursor.style.borderRadius = '50%';
+    document.body.appendChild(cursor);
+    let x = 0, y = 0;
+    setInterval(() => {
+      x = Math.random() * window.innerWidth;
+      y = Math.random() * window.innerHeight;
+      cursor.style.left = x + 'px';
+      cursor.style.top = y + 'px';
+    }, 300);
+  </script>
+</body>
+</html>
