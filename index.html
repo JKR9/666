@@ -2,75 +2,100 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Loading...</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>You Are Not Alone</title>
   <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      margin: 0;
-      background: black;
-      color: white;
-      font-family: "Arial", sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      font-size: 24px;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:#000;
+      overflow:hidden;
+      cursor: none;
     }
-
-    .hidden {
-      display: none;
+    #flash {
+      position:fixed;
+      top:0;left:0;right:0;bottom:0;
+      background:#fff;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity 0.2s;
     }
-
-    .scare {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      animation: shake 0.5s infinite;
+    img#monster {
+      max-width:90vw;
+      max-height:90vh;
+      display:none;
     }
-
-    @keyframes shake {
-      0% { transform: translate(1px, 1px) rotate(0deg); }
-      10% { transform: translate(-1px, -2px) rotate(-1deg); }
-      20% { transform: translate(-3px, 0px) rotate(1deg); }
-      30% { transform: translate(3px, 2px) rotate(0deg); }
-      40% { transform: translate(1px, -1px) rotate(1deg); }
-      50% { transform: translate(-1px, 2px) rotate(-1deg); }
-      60% { transform: translate(-3px, 1px) rotate(0deg); }
-      70% { transform: translate(3px, 1px) rotate(-1deg); }
-      80% { transform: translate(-1px, -1px) rotate(1deg); }
-      90% { transform: translate(1px, 2px) rotate(0deg); }
-      100% { transform: translate(1px, -2px) rotate(-1deg); }
-    }
-
-    img {
-      max-width: 100%;
-      max-height: 100%;
+    #info {
+      position:fixed;
+      bottom:10px;
+      left:50%;
+      transform:translateX(-50%);
+      font-family:"Courier New", monospace;
+      font-size:1rem;
+      color:#0f0;
+      white-space:pre-wrap;
+      text-align:center;
+      opacity:0;
+      transition:opacity 1s 3s;
     }
   </style>
 </head>
 <body>
-  <div id="message">Loading, please wait...</div>
+  <div id="flash"></div>
+  <img id="monster" src="https://i.imgur.com/OY9Fq5l.png" alt="monster" />
+  <div id="info"></div>
 
-  <div class="scare hidden" id="scare">
-    <img src="https://i.imgur.com/ZX9V3dz.png" alt="scary face">
-  </div>
-
-  <audio id="scream" src="https://www.myinstants.com/media/sounds/female-scream.mp3" preload="auto"></audio>
+  <audio id="scream" src="https://freesound.org/data/previews/331/331912_3248244-lq.mp3" preload="auto"></audio>
 
   <script>
-    setTimeout(() => {
-      document.getElementById('message').classList.add('hidden');
-      document.getElementById('scare').classList.remove('hidden');
-      document.getElementById('scream').play();
-    }, 6000);
+    // Play scream and reveal monster after 3 seconds
+    const scream = document.getElementById('scream');
+    const monster = document.getElementById('monster');
+    const flash = document.getElementById('flash');
+    const info = document.getElementById('info');
+
+    function flashScreen() {
+      flash.style.opacity = 1;
+      setTimeout(()=>flash.style.opacity = 0, 150);
+    }
+
+    function showMonster() {
+      monster.style.display = 'block';
+    }
+
+    function typeText(text, el, i = 0) {
+      if (i < text.length) {
+        el.textContent += text.charAt(i);
+        setTimeout(() => typeText(text, el, i + 1), 40);
+      }
+    }
+
+    async function getIP() {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        return data.ip;
+      } catch { return 'unknown'; }
+    }
+
+    window.onload = async () => {
+      // small delay for tension
+      setTimeout(()=>{
+        scream.play();
+        flashScreen();
+        showMonster();
+      }, 3000);
+
+      const ip = await getIP();
+      const ua = navigator.userAgent;
+      const msg = `I see you...\nIP: ${ip}\nBrowser: ${ua}`;
+      typeText(msg, info);
+      info.style.opacity = 1;
+    };
   </script>
 </body>
 </html>
